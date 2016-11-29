@@ -54,23 +54,31 @@ function changePictures() {
   var randomMiddleIndex = generateRandomNumber();
   var randomRightIndex = generateRandomNumber();
 
+  // generate random index number for the indecies
   while (displayLeftIndex === randomLeftIndex) {
     randomLeftIndex = generateRandomNumber();
   }
-
-  displayLeftIndex = randomLeftIndex;
-  leftImage.src = 'images/' + PATHS_ARRAY[randomLeftIndex];
-
   while (displayMiddleIndex === randomMiddleIndex) {
     randomMiddleIndex = generateRandomNumber();
   }
-
-  displayMiddleIndex = randomMiddleIndex;
-  middleImage.src = 'images/' + PATHS_ARRAY[randomMiddleIndex];
-
   while (displayRightIndex === randomRightIndex) {
     randomRightIndex = generateRandomNumber();
   }
+
+  // verify that random indecies aren't the same
+  while (randomLeftIndex === randomMiddleIndex || randomLeftIndex === randomRightIndex) {
+    randomLeftIndex = generateRandomNumber();
+  }
+  while (randomMiddleIndex === randomRightIndex) {
+    randomMiddleIndex = generateRandomNumber();
+  }
+
+  // display random images to the screen
+  displayLeftIndex = randomLeftIndex;
+  leftImage.src = 'images/' + PATHS_ARRAY[randomLeftIndex];
+
+  displayMiddleIndex = randomMiddleIndex;
+  middleImage.src = 'images/' + PATHS_ARRAY[randomMiddleIndex];
 
   displayRightIndex = randomRightIndex;
   rightImage.src = 'images/' + PATHS_ARRAY[randomRightIndex];
