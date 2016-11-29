@@ -45,7 +45,7 @@ function changePictures() {
   var randomMiddleIndex = generateRandomNumber();
   var randomRightIndex = generateRandomNumber();
 
-  // generate random index number for the indecies
+  // generate random index number for the indices
   while (displayLeftIndex === randomLeftIndex) {
     randomLeftIndex = generateRandomNumber();
   }
@@ -56,7 +56,7 @@ function changePictures() {
     randomRightIndex = generateRandomNumber();
   }
 
-  // verify that random indecies aren't the same
+  // verify that random indices aren't the same
   while (randomLeftIndex === randomMiddleIndex || randomLeftIndex === randomRightIndex) {
     randomLeftIndex = generateRandomNumber();
   }
@@ -122,3 +122,57 @@ function clickHandler(event) {
 
 //find what was clicked
 //find it in the array
+
+function renderChart() {
+  var ctx = document.getElementById('my_chart');
+  var chartConfig = {
+    type: 'bar',
+    data: {
+      labels: makeArrayOfNamesAndClicked(IMAGE_OBJECT_ARRAY)[0], //['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      datasets: [{
+        label: '# of Clicks',
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      }
+    }
+  };
+
+  function makeArrayOfNamesAndClicked(IMAGE_OBJECT_ARRAY) {
+    var arrayOfNames = [];
+    var arrayOfClicked = [];
+
+    for (var i = 0; i < IMAGE_OBJECT_ARRAY.length; i++){
+      arrayOfNames.push(IMAGE_OBJECT_ARRAY[i].name);
+      arrayOfClicked.push(IMAGE_OBJECT_ARRAY[i].clicked);
+    }
+
+    return [arrayOfNames, arrayOfClicked];
+  }
+
+  var myChart = new Chart(ctx, chartConfig);
+}
