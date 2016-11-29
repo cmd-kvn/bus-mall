@@ -42,3 +42,41 @@ for (var i = 0; i < PATHS_ARRAY.length; i++) {
 // display results after 25 selections have been made
 
 // The marketing team is not only interested in the total number of clicks, but also the percentage of times that an item was clicked when it was shown. So, you'll also need to keep track of how many times each image is displayed and do the calculations.
+var displayLeftIndex = 0;
+var displayMiddleIndex = 0;
+var displayRightIndex = 0;
+
+function changePictures() {
+  var leftImage = document.getElementById('left_image');
+  var middleImage = document.getElementById('middle_image');
+  var rightImage = document.getElementById('right_image');
+  var randomLeftIndex = generateRandomNumber();
+  var randomMiddleIndex = generateRandomNumber();
+  var randomRightIndex = generateRandomNumber();
+
+  while (displayLeftIndex === randomLeftIndex) {
+    randomLeftIndex = generateRandomNumber();
+  }
+
+  displayLeftIndex = randomLeftIndex;
+  leftImage.src = 'images/' + PATHS_ARRAY[randomLeftIndex];
+
+  while (displayMiddleIndex === randomMiddleIndex) {
+    randomMiddleIndex = generateRandomNumber();
+  }
+
+  displayMiddleIndex = randomMiddleIndex;
+  middleImage.src = 'images/' + PATHS_ARRAY[randomMiddleIndex];
+
+  while (displayRightIndex === randomRightIndex) {
+    randomRightIndex = generateRandomNumber();
+  }
+
+  displayRightIndex = randomRightIndex;
+  rightImage.src = 'images/' + PATHS_ARRAY[randomRightIndex];
+
+
+  function generateRandomNumber() {
+    return Math.floor(Math.random() * PATHS_ARRAY.length);
+  }
+}
