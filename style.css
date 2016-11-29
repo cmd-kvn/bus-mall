@@ -1,0 +1,21 @@
+main {
+  width: 960px;
+  outline: 5px solid blue;
+}
+
+.clear_fix:after {
+  display: table;
+  content: ' ';
+  clear: both;
+}
+
+img {
+  outline: 3px solid red;
+  height: 200px;
+  width: 200px;
+  float: left;
+}
+
+section {
+  outline: 2px dashed green;
+}
