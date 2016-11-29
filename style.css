@@ -15,3 +15,7 @@ img {
   width: 200px;
   float: left;
 }
+
+section {
+  outline: 2px dashed green;
+}
