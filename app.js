@@ -107,6 +107,7 @@ function clickHandler(event) {
     var dataArea = document.getElementById('data_area');
 
     dataArea.textContent = 'you hit ' + COLLECT_LIMIT + ' clicks';
+    renderChart();
   }
 }
 
@@ -128,28 +129,22 @@ function renderChart() {
   var chartConfig = {
     type: 'bar',
     data: {
-      labels: makeArrayOfNamesAndClicked(IMAGE_OBJECT_ARRAY)[0], //['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      labels: makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY)[0], // x-axis labels
       datasets: [{
         label: '# of Clicks',
-        data: [12, 19, 3, 5, 2, 3],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255,99,132,1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
-        ],
+        data: makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY)[1], //graph data of times clicked
+        backgroundColor: '#003df5',
+        borderColor: '#002eb8',
         borderWidth: 1
-      }]
+      },
+        {
+          label: '# of Times Shown',
+          data: makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY)[2], //graph data of numTimesShown
+          backgroundColor: '#33ffcc',
+          borderColor: '#33ccff',
+          borderWidth: 1
+        }
+      ]
     },
     options: {
       scales: {
@@ -162,16 +157,19 @@ function renderChart() {
     }
   };
 
-  function makeArrayOfNamesAndClicked(IMAGE_OBJECT_ARRAY) {
+  function makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY) {
     var arrayOfNames = [];
     var arrayOfClicked = [];
+    var arrayOfNumTimesShown = [];
 
     for (var i = 0; i < IMAGE_OBJECT_ARRAY.length; i++){
       arrayOfNames.push(IMAGE_OBJECT_ARRAY[i].name);
       arrayOfClicked.push(IMAGE_OBJECT_ARRAY[i].clicked);
+      arrayOfNumTimesShown.push(IMAGE_OBJECT_ARRAY[i].numTimesShown);
     }
 
-    return [arrayOfNames, arrayOfClicked];
+    // to access either array outside the fxn, call makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY)[i]
+    return [arrayOfNames, arrayOfClicked, arrayOfNumTimesShown];
   }
 
   var myChart = new Chart(ctx, chartConfig);
