@@ -1,6 +1,6 @@
 //***************************************************************************************************************************
 // author: Kevin Wong
-// date: 11/28/16
+// date: 11/29/16
 // program: bus-mall app
 // description: The app's purpose is to have the group members choose which product, of the three displayed images, that they would
 //              be most likely to purchase, and then store, calculate, and visually display the resulting data.
@@ -30,55 +30,8 @@ for (var i = 0; i < PATHS_ARRAY.length; i++) {
   var photo = new ImageObject(PATHS_ARRAY[i]); // create an object for each image
   IMAGE_OBJECT_ARRAY.push(photo); // push the photo object into the IMAGE_OBJECT_ARRAY
 }
-//console.log(PATHS_ARRAY);
-
-// select three random photos from the image directory and display them side-by-side-by-side in the browser window; managing the size and the aspect ratio of the images.
-var displayLeftIndex = 0;
-var displayMiddleIndex = 0;
-var displayRightIndex = 0;
-
-function changePictures() {
-  var leftImage = document.getElementById('left_image');
-  var middleImage = document.getElementById('middle_image');
-  var rightImage = document.getElementById('right_image');
-  var randomLeftIndex = generateRandomNumber();
-  var randomMiddleIndex = generateRandomNumber();
-  var randomRightIndex = generateRandomNumber();
-
-  // generate random index number for the indecies
-  while (displayLeftIndex === randomLeftIndex) {
-    randomLeftIndex = generateRandomNumber();
-  }
-  while (displayMiddleIndex === randomMiddleIndex) {
-    randomMiddleIndex = generateRandomNumber();
-  }
-  while (displayRightIndex === randomRightIndex) {
-    randomRightIndex = generateRandomNumber();
-  }
-
-  // verify that random indecies aren't the same
-  while (randomLeftIndex === randomMiddleIndex || randomLeftIndex === randomRightIndex) {
-    randomLeftIndex = generateRandomNumber();
-  }
-  while (randomMiddleIndex === randomRightIndex) {
-    randomMiddleIndex = generateRandomNumber();
-  }
-
-  // display random images to the screen
-  displayLeftIndex = randomLeftIndex;
-  leftImage.src = 'images/' + PATHS_ARRAY[randomLeftIndex];
-
-  displayMiddleIndex = randomMiddleIndex;
-  middleImage.src = 'images/' + PATHS_ARRAY[randomMiddleIndex];
-
-  displayRightIndex = randomRightIndex;
-  rightImage.src = 'images/' + PATHS_ARRAY[randomRightIndex];
 
 
-  function generateRandomNumber() {
-    return Math.floor(Math.random() * PATHS_ARRAY.length);
-  }
-}
 
 // receive clicks on those displayed images, and track those clicks for each image.
 // track how many times each image is displayed, for statistical purposes.
@@ -107,6 +60,7 @@ function clickHandler(event) {
     var dataArea = document.getElementById('data_area');
 
     dataArea.textContent = 'you hit ' + COLLECT_LIMIT + ' clicks';
+    renderChart();
   }
 }
 
@@ -122,3 +76,103 @@ function clickHandler(event) {
 
 //find what was clicked
 //find it in the array
+
+// select three random photos from the image directory and display them side-by-side-by-side in the browser window; managing the size and the aspect ratio of the images.
+function changePictures() {
+  var leftImage = document.getElementById('left_image');
+  var middleImage = document.getElementById('middle_image');
+  var rightImage = document.getElementById('right_image');
+  var randomLeftIndex = generateRandomNumber();
+  var randomMiddleIndex = generateRandomNumber();
+  var randomRightIndex = generateRandomNumber();
+  var displayLeftIndex = 0;
+  var displayMiddleIndex = 0;
+  var displayRightIndex = 0;
+
+  // generate random index number for the indices
+  while (displayLeftIndex === randomLeftIndex) {
+    randomLeftIndex = generateRandomNumber();
+  }
+  while (displayMiddleIndex === randomMiddleIndex) {
+    randomMiddleIndex = generateRandomNumber();
+  }
+  while (displayRightIndex === randomRightIndex) {
+    randomRightIndex = generateRandomNumber();
+  }
+
+  // verify that random indices aren't the same
+  while (randomLeftIndex === randomMiddleIndex || randomLeftIndex === randomRightIndex) {
+    randomLeftIndex = generateRandomNumber();
+  }
+  while (randomMiddleIndex === randomRightIndex) {
+    randomMiddleIndex = generateRandomNumber();
+  }
+
+  // display random images to the screen
+  displayLeftIndex = randomLeftIndex;
+  leftImage.src = 'images/' + PATHS_ARRAY[randomLeftIndex];
+
+  displayMiddleIndex = randomMiddleIndex;
+  middleImage.src = 'images/' + PATHS_ARRAY[randomMiddleIndex];
+
+  displayRightIndex = randomRightIndex;
+  rightImage.src = 'images/' + PATHS_ARRAY[randomRightIndex];
+
+
+  function generateRandomNumber() {
+    return Math.floor(Math.random() * PATHS_ARRAY.length);
+  }
+}
+
+function renderChart() {
+  var ctx = document.getElementById('my_chart');
+  var chartConfig = {
+    type: 'bar',
+    data: {
+      labels: makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY)[0], // x-axis labels
+      datasets: [{
+        label: '# of Clicks',
+        data: makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY)[1], //graph data of times clicked
+        backgroundColor: '#003df5',
+        borderColor: '#002eb8',
+        borderWidth: 1
+      },
+        {
+          label: '# of Times Shown',
+          data: makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY)[2], //graph data of numTimesShown
+          backgroundColor: '#33ffcc',
+          borderColor: '#33ccff',
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      }
+    }
+  };
+
+  function makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY) {
+    var arrayOfNames = [];
+    var arrayOfClicked = [];
+    var arrayOfNumTimesShown = [];
+
+    // use a for loop to populate arrays for each property from the IMAGE_OBJECT_ARRAY
+    for (var i = 0; i < IMAGE_OBJECT_ARRAY.length; i++){
+      arrayOfNames.push(IMAGE_OBJECT_ARRAY[i].name);
+      arrayOfClicked.push(IMAGE_OBJECT_ARRAY[i].clicked);
+      arrayOfNumTimesShown.push(IMAGE_OBJECT_ARRAY[i].numTimesShown);
+    }
+
+    // to access either array outside the function, call makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY)[i]
+    return [arrayOfNames, arrayOfClicked, arrayOfNumTimesShown];
+  }
+
+  // use the chart.js library to render the chart after passing in the arguments from above
+  new Chart(ctx, chartConfig);
+}
