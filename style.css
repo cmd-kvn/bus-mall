@@ -1,5 +1,5 @@
 main {
-  width: 960px;
+  width: 720px;
   outline: 5px solid blue;
 }
 
@@ -11,8 +11,9 @@ main {
 
 img {
   outline: 3px solid red;
-  height: 200px;
+  /*height: 200px;*/
   width: 200px;
+  padding: 20px;
   float: left;
 }
 
