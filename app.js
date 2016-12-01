@@ -107,11 +107,11 @@ function changePictures() {
   }
 
   // verify that random indices aren't the same
-  while (randomLeftIndex === randomMiddleIndex || randomLeftIndex === randomRightIndex) {
+  while (randomLeftIndex === randomMiddleIndex) {
     randomLeftIndex = generateRandomNumber();
   }
-  while (randomMiddleIndex === randomRightIndex) {
-    randomMiddleIndex = generateRandomNumber();
+  while (randomMiddleIndex === randomRightIndex || randomLeftIndex === randomRightIndex) {
+    randomRightIndex = generateRandomNumber();
   }
 
   // display random images to the screen
