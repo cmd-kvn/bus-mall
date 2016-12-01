@@ -17,14 +17,6 @@ var PATHS_ARRAY = [
 var TOTAL_CLICKS = 0;
 var COLLECT_LIMIT = 25;
 
-// create a constructor function that creates an object associated with each image, and has (at a minimum) properties for the name of the image, its filepath, the number of times it has been shown, and the number of times it has been clicked.
-function ImageObject(paths) {
-  this.name = paths;
-  this.path = 'images/' + paths;
-  this.clicked = 0;
-  this.numTimesShown = 0;
-}
-
 // create an array of objects representing each image if it doesn't exist in the local storage
 if (localStorage.getItem('imageObjectArray') === null) {
   for (var i = 0; i < PATHS_ARRAY.length; i++) {
@@ -34,7 +26,7 @@ if (localStorage.getItem('imageObjectArray') === null) {
 
   // set the array in local storage as a wonky string
   localStorage.setItem('imageObjectArray', IMAGE_OBJECT_ARRAY);
-} else { // the IMAGE_OBJECT_ARRAY is the same as the local storage version
+} else { // the IMAGE_OBJECT_ARRAY alraedy exists after a page refresh and is the same as the local storage version
   // get the JSON string (created earlier) from local storage and set it to a variable
   var storedImageObjectArrayString = localStorage.getItem('imageObjectArray');
   // parse the JSON string to update the objects key:values in IMAGE_OBJECT_ARRAY
@@ -61,15 +53,15 @@ function clickHandler(event) {
   for (var i = 0; i < IMAGE_OBJECT_ARRAY.length; i++) {
     itemPath = IMAGE_OBJECT_ARRAY[i].path.split('images')[1];
     if (itemPath === targetPath) {
-      IMAGE_OBJECT_ARRAY[i].clicked += 1;
+      IMAGE_OBJECT_ARRAY[i].clicked += 1; // increase the clicked property of the object
       IMAGE_OBJECT_ARRAY[i].numTimesShown += 1;
-      TOTAL_CLICKS++;
+      TOTAL_CLICKS += 1; // increase the total clicks count
     }
   }
 
   changePictures();
 
-  // display results after 25 selections have been made
+  // display charted results after 25 selections have been made
   if (TOTAL_CLICKS >= COLLECT_LIMIT) {
     var dataArea = document.getElementById('data_area');
     dataArea.textContent = 'you hit ' + COLLECT_LIMIT + ' clicks';
@@ -189,4 +181,12 @@ function renderChart() {
 
   // use the chart.js library to render the chart after passing in the arguments from above
   new Chart(ctx, chartConfig);
+}
+
+// create a constructor function that creates an object associated with each image, and has (at a minimum) properties for the name of the image, its filepath, the number of times it has been shown, and the number of times it has been clicked.
+function ImageObject(paths) {
+  this.name = paths;
+  this.path = 'images/' + paths;
+  this.clicked = 0;
+  this.numTimesShown = 0;
 }
