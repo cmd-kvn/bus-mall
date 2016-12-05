@@ -34,35 +34,33 @@ if (localStorage.getItem('imageObjectArray') === null) {
   IMAGE_OBJECT_ARRAY = JSON.parse(storedImageObjectArrayString);
 }
 
+// create the display area and add an event listener
 var displayArea = document.getElementById('image_area');
-
 displayArea.addEventListener('click', clickHandler);
 
 function clickHandler(event) {
   if (TOTAL_CLICKS > COLLECT_LIMIT) {
-    // stop the page from handling more clicks
-    return;
+    return; // stop the page from handling more clicks
   }
 
   var targetString = event.target.src;
   // receive clicks on those displayed images, and track those clicks for each image.
   // track how many times each image is displayed, for statistical purposes.
   matchClicks(targetString);
-  // prevent images from repeating in the same display
-  changePictures();
+  changePictures(); // prevent images from repeating in the same display
+
 
   // display charted results after 25 selections have been made
   if (TOTAL_CLICKS > COLLECT_LIMIT) {
     var dataArea = document.getElementById('data_area');
-    dataArea.textContent = 'you hit ' + COLLECT_LIMIT + ' clicks';
+    dataArea.textContent = 'BusMall thanks you for your ' + COLLECT_LIMIT + ' clicks and your participation!';
 
-    renderChart();
+    renderChart(); // show results on a chart
   }
 
   // add persistence by using local storage to store your voting data! The goal is to have all of your data persist through a page refresh or through completely closing the browser
   // turn the updated IMAGE_OBJECT_ARRAY into a JSON string and set it to a variable
-  var imgObjArrJSON = JSON.stringify(IMAGE_OBJECT_ARRAY);
-  // set the JSON string as a value for the key: imageObjectArray
+  var imgObjArrJSON = JSON.stringify(IMAGE_OBJECT_ARRAY); // set the JSON string as a value for the key: imageObjectArray
   localStorage.setItem('imageObjectArray', imgObjArrJSON); // updated IMAGE_OBJECT_ARRAY (with data) now exists in local storage as a JSON string
 }
 
@@ -71,11 +69,13 @@ function matchClicks(targetString) {
   var itemPath;
   var displayIndex;
 
+  // keep track of how many times a product was shown
   for (var i = 0; i < DISPLAY_INDICES.length; i++) {
     displayIndex = DISPLAY_INDICES[i];
     IMAGE_OBJECT_ARRAY[displayIndex].numTimesShown += 1;
   }
 
+  // every time a the targetPath of an event matches the itemPath, increase its click count and the total click count
   for (i = 0; i < IMAGE_OBJECT_ARRAY.length; i++) {
     itemPath = IMAGE_OBJECT_ARRAY[i].path.split('images')[1];
     if (itemPath === targetPath) {
