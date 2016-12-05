@@ -16,6 +16,7 @@ var PATHS_ARRAY = [
   'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
 var TOTAL_CLICKS = 0;
 var COLLECT_LIMIT = 25;
+var DISPLAY_INDICES = [0, 0, 0];
 
 // create an array of objects representing each image if it doesn't exist in the local storage
 if (localStorage.getItem('imageObjectArray') === null) {
@@ -26,43 +27,32 @@ if (localStorage.getItem('imageObjectArray') === null) {
 
   // set the array in local storage as a wonky string
   localStorage.setItem('imageObjectArray', IMAGE_OBJECT_ARRAY);
-} else { // the IMAGE_OBJECT_ARRAY alraedy exists after a page refresh and is the same as the local storage version
+} else { // the IMAGE_OBJECT_ARRAY already exists after a page refresh and is the same as the local storage version
   // get the JSON string (created earlier) from local storage and set it to a variable
   var storedImageObjectArrayString = localStorage.getItem('imageObjectArray');
   // parse the JSON string to update the objects key:values in IMAGE_OBJECT_ARRAY
   IMAGE_OBJECT_ARRAY = JSON.parse(storedImageObjectArrayString);
 }
 
-// receive clicks on those displayed images, and track those clicks for each image.
-// track how many times each image is displayed, for statistical purposes.
-// prevent images from repeating in the same display
 var displayArea = document.getElementById('image_area');
 
 displayArea.addEventListener('click', clickHandler);
 
 function clickHandler(event) {
-  var targetString = event.target.src;
-  var targetPath = targetString.split('images')[1];
-  var itemPath;
-
   if (TOTAL_CLICKS > COLLECT_LIMIT) {
     // stop the page from handling more clicks
     return;
   }
 
-  for (var i = 0; i < IMAGE_OBJECT_ARRAY.length; i++) {
-    itemPath = IMAGE_OBJECT_ARRAY[i].path.split('images')[1];
-    if (itemPath === targetPath) {
-      IMAGE_OBJECT_ARRAY[i].clicked += 1; // increase the clicked property of the object
-      IMAGE_OBJECT_ARRAY[i].numTimesShown += 1;
-      TOTAL_CLICKS += 1; // increase the total clicks count
-    }
-  }
-
+  var targetString = event.target.src;
+  // receive clicks on those displayed images, and track those clicks for each image.
+  // track how many times each image is displayed, for statistical purposes.
+  matchClicks(targetString);
+  // prevent images from repeating in the same display
   changePictures();
 
   // display charted results after 25 selections have been made
-  if (TOTAL_CLICKS >= COLLECT_LIMIT) {
+  if (TOTAL_CLICKS > COLLECT_LIMIT) {
     var dataArea = document.getElementById('data_area');
     dataArea.textContent = 'you hit ' + COLLECT_LIMIT + ' clicks';
 
@@ -76,54 +66,54 @@ function clickHandler(event) {
   localStorage.setItem('imageObjectArray', imgObjArrJSON); // updated IMAGE_OBJECT_ARRAY (with data) now exists in local storage as a JSON string
 }
 
-// Upon receiving a click, three new non-duplicating random images need to be automatically displayed. In other words, the three images that are displayed should contain no duplicates, nor should they duplicate with any images that we displayed immediately before
+function matchClicks(targetString) {
+  var targetPath = targetString.split('images')[1];
+  var itemPath;
+  var displayIndex;
 
-// The marketing team is not only interested in the total number of clicks, but also the percentage of times that an item was clicked when it was shown. So, you'll also need to keep track of how many times each image is displayed and do the calculations.
+  for (var i = 0; i < DISPLAY_INDICES.length; i++) {
+    displayIndex = DISPLAY_INDICES[i];
+    IMAGE_OBJECT_ARRAY[displayIndex].numTimesShown += 1;
+  }
 
-//find what was clicked
-//find it in the array
+  for (i = 0; i < IMAGE_OBJECT_ARRAY.length; i++) {
+    itemPath = IMAGE_OBJECT_ARRAY[i].path.split('images')[1];
+    if (itemPath === targetPath) {
+      IMAGE_OBJECT_ARRAY[i].clicked += 1; // increase the clicked property of the object
+      TOTAL_CLICKS += 1; // increase the total clicks count
+    }
+  }
+}
 
 // select three random photos from the image directory and display them side-by-side-by-side in the browser window; managing the size and the aspect ratio of the images.
 function changePictures() {
   var leftImage = document.getElementById('left_image');
   var middleImage = document.getElementById('middle_image');
   var rightImage = document.getElementById('right_image');
-  var randomLeftIndex = generateRandomNumber();
-  var randomMiddleIndex = generateRandomNumber();
-  var randomRightIndex = generateRandomNumber();
-  var displayLeftIndex = 0;
-  var displayMiddleIndex = 0;
-  var displayRightIndex = 0;
+  var indices = generateRandomUniqueIndexes();
 
-  // generate random index number for the indices
-  while (displayLeftIndex === randomLeftIndex) {
-    randomLeftIndex = generateRandomNumber();
+  leftImage.src = IMAGE_OBJECT_ARRAY[indices[0]].path;
+  middleImage.src = IMAGE_OBJECT_ARRAY[indices[1]].path;
+  rightImage.src = IMAGE_OBJECT_ARRAY[indices[2]].path;
+
+  DISPLAY_INDICES = indices;
+
+  // Upon receiving a click, three new non-duplicating random images need to be automatically displayed. In other words, the three images that are displayed should contain no duplicates, nor should they duplicate with any images that we displayed immediately before
+  function generateRandomUniqueIndexes() {
+    var uniqueIndices = [];
+    var uniqueIndex;
+
+    for (var i = 0; i < DISPLAY_INDICES.length; i++) { // 3 reps to get 3 numbers
+      do {
+        uniqueIndex = generateRandomNumber(); // generate random number for uniqueIndex
+      } while (uniqueIndices.indexOf(uniqueIndex) !== -1 || // check to see if uniqueIndex is in var uniqueIndices array
+      DISPLAY_INDICES.indexOf(uniqueIndex) !== -1); // check to see if uniqueIndex is in DISPLAY_INDICES[]
+
+      uniqueIndices.push(uniqueIndex); // if not, add it into var uniqueIndices array
+    }
+
+    return uniqueIndices;
   }
-  while (displayMiddleIndex === randomMiddleIndex) {
-    randomMiddleIndex = generateRandomNumber();
-  }
-  while (displayRightIndex === randomRightIndex) {
-    randomRightIndex = generateRandomNumber();
-  }
-
-  // verify that random indices aren't the same
-  while (randomLeftIndex === randomMiddleIndex) {
-    randomLeftIndex = generateRandomNumber();
-  }
-  while (randomMiddleIndex === randomRightIndex || randomLeftIndex === randomRightIndex) {
-    randomRightIndex = generateRandomNumber();
-  }
-
-  // display random images to the screen
-  displayLeftIndex = randomLeftIndex;
-  leftImage.src = 'images/' + PATHS_ARRAY[randomLeftIndex];
-
-  displayMiddleIndex = randomMiddleIndex;
-  middleImage.src = 'images/' + PATHS_ARRAY[randomMiddleIndex];
-
-  displayRightIndex = randomRightIndex;
-  rightImage.src = 'images/' + PATHS_ARRAY[randomRightIndex];
-
 
   function generateRandomNumber() {
     return Math.floor(Math.random() * PATHS_ARRAY.length);
@@ -149,6 +139,13 @@ function renderChart() {
           backgroundColor: '#33ffcc',
           borderColor: '#33ccff',
           borderWidth: 1
+        },
+        {
+          label: '% of Clicks When Viewed',
+          data: makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY)[3], //graph data of percentageClickedVsShown
+          backgroundColor: '#ffae19',
+          borderColor: '#ffa500',
+          borderWidth: 1
         }
       ]
     },
@@ -167,16 +164,21 @@ function renderChart() {
     var arrayOfNames = [];
     var arrayOfClicked = [];
     var arrayOfNumTimesShown = [];
+    var arrayOfPercentageClickedVsShown = [];
+    var percentage = 0;
 
     // use a for loop to populate arrays for each property from the IMAGE_OBJECT_ARRAY
     for (var i = 0; i < IMAGE_OBJECT_ARRAY.length; i++){
       arrayOfNames.push(IMAGE_OBJECT_ARRAY[i].name);
       arrayOfClicked.push(IMAGE_OBJECT_ARRAY[i].clicked);
       arrayOfNumTimesShown.push(IMAGE_OBJECT_ARRAY[i].numTimesShown);
+      // The marketing team is not only interested in the total number of clicks, but also the percentage of times that an item was clicked when it was shown. So, you'll also need to keep track of how many times each image is displayed and do the calculations.
+      percentage = IMAGE_OBJECT_ARRAY[i].clicked / IMAGE_OBJECT_ARRAY[i].numTimesShown * 100;
+      arrayOfPercentageClickedVsShown.push(percentage);
     }
 
     // to access either array outside the function, call makeArraysOfImageProperties(IMAGE_OBJECT_ARRAY)[i]
-    return [arrayOfNames, arrayOfClicked, arrayOfNumTimesShown];
+    return [arrayOfNames, arrayOfClicked, arrayOfNumTimesShown, arrayOfPercentageClickedVsShown];
   }
 
   // use the chart.js library to render the chart after passing in the arguments from above
